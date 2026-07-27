@@ -10,7 +10,7 @@ Edit the paths/tickers below to match your actual setup.
 # ---------------------------------------------------------------------------
 INDEX_TICKERS = {
     "NIFTY 50": "^NSEI",
-    "NIFTY SMALLCAP 100": "^CNXSC",       # fallback: "NIFTYSMLCAP100.NS"
+    "NIFTY SMALLCAP 100": "NIFTYSMLCAP100.NS",       # fallback: "NIFTYSMLCAP100.NS"
     "SENSEX": "^BSESN",
 }
 
@@ -82,4 +82,4 @@ NEWS_TAGS = {
     "POLICY":   ["rbi", "fed", "sebi", "budget", "tariff", "trade deal"],
 }
 
-OUTPUT_DIR = "docs"
+OUTPUT_DIR = "../docs"
