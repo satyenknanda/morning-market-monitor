@@ -5,7 +5,10 @@ sandboxed dev environment with domain allowlisting.
 """
 import logging
 import math
+import requests
 import yfinance as yf
+
+import config
 
 log = logging.getLogger("market_monitor.fetch_market_data")
 
@@ -48,8 +51,6 @@ def fetch_nse_indices(name_match_map: dict) -> dict:
     for sub-indices Yahoo Finance doesn't reliably carry.
     Returns {label: {"value": x, "pct": y}}, with (None, None) per label on failure.
     """
-    import requests
-
     out = {label: {"value": None, "pct": None} for label in name_match_map}
     try:
         session = requests.Session()
@@ -80,7 +81,6 @@ def fetch_nse_indices(name_match_map: dict) -> dict:
 
 
 if __name__ == "__main__":
-    import config
     logging.basicConfig(level=logging.INFO)
     print(fetch_group(config.INDEX_TICKERS))
     print(fetch_group(config.FX_COMMODITY_TICKERS))
