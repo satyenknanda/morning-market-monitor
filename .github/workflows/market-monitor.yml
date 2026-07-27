@@ -40,10 +40,4 @@ jobs:
       # default branch, the commit above is all you need — Pages will
       # redeploy automatically. This explicit deploy step is only needed
       # if you're using the Pages "GitHub Actions" build source instead.
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: docs
-
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
+      
