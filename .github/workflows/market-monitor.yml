@@ -1,0 +1,49 @@
+name: Morning Market Monitor
+
+on:
+  schedule:
+    # 8:30 AM IST = 03:00 UTC, weekdays only
+    - cron: "0 3 * * 1-5"
+  workflow_dispatch: {}   # allows manual "Run workflow" trigger for testing
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install yfinance pandas requests feedparser
+
+      - name: Generate dashboard
+        working-directory: scripts
+        run: python main.py
+
+      - name: Commit generated pages
+        run: |
+          git config user.name "market-monitor-bot"
+          git config user.email "actions@github.com"
+          git add docs/
+          git diff --cached --quiet || git commit -m "Update morning market monitor $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          git push
+
+      # Optional: if you enable GitHub Pages with source = /docs on the
+      # default branch, the commit above is all you need — Pages will
+      # redeploy automatically. This explicit deploy step is only needed
+      # if you're using the Pages "GitHub Actions" build source instead.
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
