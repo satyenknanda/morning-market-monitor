@@ -9,16 +9,17 @@ Edit the paths/tickers below to match your actual setup.
 INDEX_TICKERS = {
     "NIFTY 50": "^NSEI",
     "SENSEX": "^BSESN",
-    # Confirmed valid on finance.yahoo.com (as "NIFTY MIDSML 400") — needed
-    # the longer-period retry in fetch_market_data._quote() to actually
-    # return bars, not a different symbol.
-    "NIFTY MIDSMALLCAP 400": "NIFTYMIDSML400.NS",
 }
 
-# Kept as a fallback path — unused unless a future index proves as
-# stubborn as this one was, in which case NSE's own live-indices API
-# (fetch_market_data.fetch_nse_indices()) is the alternative to reach for.
-NSE_DIRECT_INDICES = {}
+# Nifty Midsmallcap 400 has failed via yfinance repeatedly (NIFTYMIDSML400.NS
+# is a valid symbol on finance.yahoo.com but yfinance's .history() won't
+# return bars for it even with 5d/1mo/3mo retries — likely a Yahoo API/library
+# quirk specific to this ticker). Fetching it straight from NSE's own
+# live-indices API instead — same nseindia.com domain the FII/DII fetch
+# already reaches successfully from GitHub Actions.
+NSE_DIRECT_INDICES = {
+    "NIFTY MIDSMALLCAP 400": "MIDSMALLCAP 400",
+}
 
 FX_COMMODITY_TICKERS = {
     "USD/INR": "INR=X",
