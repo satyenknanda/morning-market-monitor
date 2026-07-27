@@ -99,21 +99,25 @@ body {
 """
 
 
+def _is_missing(v) -> bool:
+    return v is None or (isinstance(v, float) and v != v)  # NaN != NaN
+
+
 def _pct_class(pct):
-    if pct is None:
+    if _is_missing(pct):
         return "pct-flat"
     return "pct-up" if pct > 0 else ("pct-down" if pct < 0 else "pct-flat")
 
 
 def _fmt_pct(pct):
-    if pct is None:
+    if _is_missing(pct):
         return "—"
     sign = "+" if pct > 0 else ""
     return f"{sign}{pct:.2f}%"
 
 
 def _fmt_val(v, decimals=2):
-    if v is None:
+    if _is_missing(v):
         return "—"
     return f"{v:,.{decimals}f}"
 
@@ -147,13 +151,15 @@ def render_market_monitor(indices, fx_commodity, fii_dii, global_cues, news_item
           <div class="metric-pct {_pct_class(d["pct"])}">{_fmt_pct(d["pct"])}</div>
         </div>'''
 
-    if fii_dii:
-        fii_val = fii_dii["fii_net_cr"]
-        dii_val = fii_dii["dii_net_cr"]
+    fii_val = fii_dii.get("fii_net_cr") if fii_dii else None
+    dii_val = fii_dii.get("dii_net_cr") if fii_dii else None
+    if fii_val is not None or dii_val is not None:
+        fii_text = f"FII {fii_val:+,.0f} cr" if fii_val is not None else "FII —"
+        dii_text = f"DII {dii_val:+,.0f} cr" if dii_val is not None else "DII —"
         metric_cards += f'''<div class="metric-card">
           <span class="metric-label">FII / DII FLOWS</span><br>
-          <div class="metric-value {_pct_class(fii_val)}">FII {fii_val:+,.0f} cr</div>
-          <div class="metric-pct {_pct_class(dii_val)}">DII {dii_val:+,.0f} cr</div>
+          <div class="metric-value {_pct_class(fii_val)}">{fii_text}</div>
+          <div class="metric-pct {_pct_class(dii_val)}">{dii_text}</div>
         </div>'''
     else:
         metric_cards += '''<div class="metric-card">

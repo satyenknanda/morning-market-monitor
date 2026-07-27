@@ -25,18 +25,36 @@ def fetch_fii_dii():
         data = resp.json()
         if not data:
             return None
-        latest = data[0]  # NSE returns most-recent-first
-        fii_net = float(latest.get("fiiSell", 0)) * -1 + float(latest.get("fiiBuy", 0))
-        dii_net = float(latest.get("diiSell", 0)) * -1 + float(latest.get("diiBuy", 0))
-        # Some NSE payload variants expose net directly — prefer that if present
-        if "fiiNet" in latest:
-            fii_net = float(latest["fiiNet"])
-        if "diiNet" in latest:
-            dii_net = float(latest["diiNet"])
+
+        # Real NSE schema: a list of rows, each shaped like
+        # {"category": "FII/FPI", "date": "27-Jul-2026",
+        #  "buyValue": "12345.67", "sellValue": "9876.54", "netValue": "2469.13"}
+        fii_net = dii_net = None
+        row_date = None
+        for row in data:
+            category = str(row.get("category", "")).upper()
+            net = row.get("netValue")
+            if net is None:
+                continue
+            try:
+                net = float(net)
+            except (TypeError, ValueError):
+                continue
+            if "FII" in category or "FPI" in category:
+                fii_net = net
+                row_date = row_date or row.get("date")
+            elif "DII" in category:
+                dii_net = net
+                row_date = row_date or row.get("date")
+
+        if fii_net is None and dii_net is None:
+            log.warning("FII/DII response had no recognizable FII/DII rows: %r", data[:2])
+            return None
+
         return {
-            "date": latest.get("date"),
-            "fii_net_cr": round(fii_net, 0),
-            "dii_net_cr": round(dii_net, 0),
+            "date": row_date,
+            "fii_net_cr": round(fii_net, 0) if fii_net is not None else None,
+            "dii_net_cr": round(dii_net, 0) if dii_net is not None else None,
         }
     except Exception as exc:
         log.warning("FII/DII fetch failed: %s", exc)

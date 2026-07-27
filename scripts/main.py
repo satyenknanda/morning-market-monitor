@@ -28,6 +28,7 @@ def main():
     indices = fetch_market_data.fetch_group(config.INDEX_TICKERS)
     fx_commodity = fetch_market_data.fetch_group(config.FX_COMMODITY_TICKERS)
     global_cues = fetch_market_data.fetch_group(config.GLOBAL_CUES_TICKERS)
+    indices.update(fetch_market_data.fetch_nse_indices(config.NSE_DIRECT_INDICES))
 
     log.info("Fetching FII/DII flows...")
     fii_dii = fetch_fii_dii.fetch_fii_dii()

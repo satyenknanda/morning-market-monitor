@@ -5,13 +5,17 @@ Edit the paths/tickers below to match your actual setup.
 
 # ---------------------------------------------------------------------------
 # Yahoo Finance tickers for the top strip + Global Cues panel.
-# NOTE: Yahoo's coverage of NSE sub-indices is inconsistent — verify
-# NIFTY_SMALLCAP_100 on first live run and swap if it returns no data.
 # ---------------------------------------------------------------------------
 INDEX_TICKERS = {
     "NIFTY 50": "^NSEI",
-    "NIFTY MIDSMALLCAP 400": "NIFTYMIDSML400.NS",  # fallback: "NIFTY_MIDSML_400.NS" if this returns no data
     "SENSEX": "^BSESN",
+}
+
+# Indices Yahoo doesn't reliably carry — fetched straight from NSE's own
+# live-indices API instead (see fetch_market_data.fetch_nse_indices()).
+# Match against the "indexName" field NSE returns (case-insensitive substring).
+NSE_DIRECT_INDICES = {
+    "NIFTY MIDSMALLCAP 400": "MIDSMALLCAP 400",
 }
 
 FX_COMMODITY_TICKERS = {
@@ -53,6 +57,7 @@ VOL_MOVE_PCT = 4.0            # "4% vol moves · X▲ / Y▼" (single-day % move
 # will respond — see fetch_fii_dii.py.
 # ---------------------------------------------------------------------------
 NSE_HOME_URL = "https://www.nseindia.com"
+NSE_ALL_INDICES_URL = "https://www.nseindia.com/api/allIndices"
 NSE_FII_DII_URL = "https://www.nseindia.com/api/fiidiiTradeReact"
 NSE_HEADERS = {
     "User-Agent": (
