@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>The Market Monitor</title>
+<style>
+:root {
+  --navy: #2c4a6e; --navy-dark: #1e3550; --ink: #1a2433; --muted: #6b7686;
+  --green: #1a9c5c; --red: #d63a3a; --amber: #b8862c; --card-bg: #ffffff;
+  --page-bg: #f4f6f9; --border: #e4e8ee;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  background: var(--page-bg); color: var(--ink);
+}
+.topbar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 32px; background: #fff; border-bottom: 1px solid var(--border);
+}
+.topbar .brand { font-weight: 700; font-size: 15px; }
+.topbar nav { display: flex; gap: 10px; }
+.topbar nav a {
+  padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border);
+  color: var(--ink); text-decoration: none; font-size: 13px; font-weight: 600;
+}
+.topbar nav a.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+.topbar .timestamp { font-size: 12px; color: var(--muted); }
+.hero {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
+  color: #fff; text-align: center; padding: 44px 20px 36px;
+}
+.hero .ticker-line { font-size: 12px; opacity: .85; margin-bottom: 18px; }
+.hero h1 { font-size: 54px; margin: 0; letter-spacing: 2px; font-weight: 800; }
+.hero .tagline { font-size: 12px; letter-spacing: 3px; opacity: .8; margin: 14px 0 6px; text-transform: uppercase; }
+.hero .meta { font-size: 13px; opacity: .9; }
+.metric-strip {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1px; background: var(--border); margin: 24px 32px; border-radius: 10px; overflow: hidden;
+}
+.metric-card { background: #fff; padding: 20px 18px; text-align: center; }
+.metric-label {
+  display: inline-block; background: var(--navy); color: #fff; font-size: 11px;
+  font-weight: 700; letter-spacing: .5px; padding: 4px 12px; border-radius: 6px; margin-bottom: 12px;
+}
+.metric-value { font-size: 24px; font-weight: 700; }
+.metric-pct { font-size: 13px; font-weight: 600; margin-top: 4px; }
+.pct-up { color: var(--green); } .pct-down { color: var(--red); } .pct-flat { color: var(--muted); }
+.grid-2 { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; margin: 0 32px 32px; }
+.panel { background: #fff; border-radius: 10px; border: 1px solid var(--border); padding: 22px 24px; }
+.panel h2 { font-size: 13px; letter-spacing: .5px; color: var(--navy); margin: 0 0 16px; }
+.feed-item { padding: 14px 0; border-bottom: 1px solid var(--border); }
+.feed-item:last-child { border-bottom: none; }
+.feed-tag {
+  display: inline-block; font-size: 10px; font-weight: 700; color: #fff;
+  padding: 2px 8px; border-radius: 4px; margin-right: 8px; background: var(--muted);
+}
+.tag-BREAKING { background: var(--red); } .tag-DEALS { background: #8a4fd6; }
+.tag-EARNINGS { background: var(--green); } .tag-COMMODITY { background: var(--amber); }
+.tag-POLICY { background: #3a6fd6; } .tag-MARKETS { background: var(--muted); }
+.feed-time { font-size: 11px; color: var(--muted); }
+.feed-title { font-weight: 600; font-size: 14px; margin: 6px 0 4px; }
+.feed-summary { font-size: 12.5px; color: var(--muted); line-height: 1.4; }
+.cue-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 12px 0; border-bottom: 1px solid var(--border);
+}
+.cue-row:last-child { border-bottom: none; }
+.cue-name { font-size: 13.5px; font-weight: 500; }
+.cue-vals { text-align: right; }
+.cue-value { font-size: 14px; font-weight: 700; }
+.cue-pct { font-size: 11.5px; }
+.gauge-wrap { text-align: center; }
+.gauge-value { font-size: 42px; font-weight: 800; margin-top: -18px; }
+.gauge-caption { font-size: 12px; color: var(--muted); letter-spacing: .5px; }
+.adv-dec-bar {
+  height: 10px; border-radius: 6px; overflow: hidden; display: flex; margin: 14px 0 8px;
+}
+.chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.chip { background: var(--page-bg); border: 1px solid var(--border); border-radius: 16px; padding: 6px 12px; font-size: 12px; }
+.footer-note { background: #eaf6ee; color: var(--green); font-size: 13px; padding: 10px 16px; border-radius: 8px; margin-top: 14px; }
+.score-badge {
+  display: inline-flex; align-items: center; gap: 10px; margin-bottom: 4px;
+}
+.score-pill {
+  background: var(--amber); color: #fff; font-weight: 700; font-size: 11px;
+  padding: 4px 10px; border-radius: 4px;
+}
+.score-num { font-size: 20px; font-weight: 800; }
+.score-desc { color: var(--amber); font-weight: 600; font-size: 13px; }
+.factor-block { margin-top: 18px; }
+.factor-block h3 { font-size: 12px; color: var(--navy); margin: 0 0 6px; letter-spacing: .3px; }
+.factor-block ul { margin: 0; padding-left: 18px; font-size: 13px; color: #333; line-height: 1.55; }
+</style></head>
+<body>
+<div class="topbar">
+      <div class="brand">The Market Monitor</div>
+      <nav><a href="index.html" class="active">Market Monitor →</a><a href="winning-edge.html" class="">Winning Edge →</a><a href="#" class="">Live Positions →</a><a href="#" class="">KPIs →</a><a href="#">● Connect Kite</a></nav>
+      <div class="timestamp">Monday, 27 July 2026 · 10:48 AM IST</div>
+    </div>
+<div class="hero">
+  <div class="ticker-line">Daily market wire — Indian equities</div>
+  <h1>MARKET MONITOR</h1>
+  <div class="tagline">Daily Market Wire</div>
+  <div class="meta">Indian equities · Monday, 27 July 2026 · generated 10:46 AM IST</div>
+</div>
+<div class="metric-strip"><div class="metric-card">
+          <span class="metric-label">NIFTY 50</span><br>
+          <div class="metric-value">23,995.95</div>
+          <div class="metric-pct pct-up">+0.96%</div>
+        </div><div class="metric-card">
+          <span class="metric-label">NIFTY SMALLCAP 100</span><br>
+          <div class="metric-value">—</div>
+          <div class="metric-pct pct-flat">—</div>
+        </div><div class="metric-card">
+          <span class="metric-label">SENSEX</span><br>
+          <div class="metric-value">76,835.78</div>
+          <div class="metric-pct pct-up">+1.02%</div>
+        </div><div class="metric-card">
+          <span class="metric-label">USD/INR</span><br>
+          <div class="metric-value">95.90</div>
+          <div class="metric-pct pct-down">-1.01%</div>
+        </div><div class="metric-card">
+          <span class="metric-label">GOLD (COMEX, $/OZ)</span><br>
+          <div class="metric-value">4,098.50</div>
+          <div class="metric-pct pct-up">+0.76%</div>
+        </div><div class="metric-card">
+          <span class="metric-label">FII / DII FLOWS</span><br>
+          <div class="metric-value pct-flat">FII +0 cr</div>
+          <div class="metric-pct pct-flat">DII +0 cr</div>
+        </div></div>
+<div class="grid-2">
+  <div class="panel"><h2>LIVE INTELLIGENCE FEED</h2><div class="feed-item">
+          <span class="feed-tag tag-BREAKING">BREAKING</span>
+          <span class="feed-time">19m ago</span>
+          <div class="feed-title">Rupee logs best day in over 6 weeks as RBI intervention magnifies oil slump impact</div>
+          <div class="feed-summary">On Monday, the Indian rupee experienced its most remarkable trading day in over six weeks, thanks to decisive actions from the central bank and a notable decrease in oil prices. Opening at 96.1475, it surged to a high of...</div>
+        </div><div class="feed-item">
+          <span class="feed-tag tag-COMMODITY">COMMODITY</span>
+          <span class="feed-time">29m ago</span>
+          <div class="feed-title">Explained: Why crude oil prices tumbled over 9% to below $90/bbl in one day</div>
+          <div class="feed-summary">Crude oil prices plunged more than 9% to $88 a barrel after the US paused strikes on Iran and Tehran signalled restraint, boosting hopes of de-escalation. Reports said China is backing Pakistan's efforts to revive US-Ira...</div>
+        </div><div class="feed-item">
+          <span class="feed-tag tag-COMMODITY">COMMODITY</span>
+          <span class="feed-time">38m ago</span>
+          <div class="feed-title">Top Gainers &amp; Losers on 27 July: CarTrade Tech, Laurus Labs, Infosys, Atul, TBO Tek, Anant Raj among top gainers</div>
+          <div class="feed-summary">The Indian stock market rebounded on July 27, with benchmark indices rising about 1% as crude oil prices fell due to reduced tensions in the Middle East. Broad-based sector gains were seen, spurred by Nifty Media, IT, an...</div>
+        </div><div class="feed-item">
+          <span class="feed-tag tag-MARKETS">MARKETS</span>
+          <span class="feed-time">44m ago</span>
+          <div class="feed-title">Sensex jumps 750 points, Nifty 50 ends a shade below 24,000; what drove the stock market today?</div>
+          <div class="feed-summary">The Sensex jumped 776 points, or 1.02%, to end at 76,835.78, while the Nifty 50 ended with a healthy gain of 229 points, or 0.96%, at 23,995.95. Investors earned  ₹5 lakh crore in a single session....</div>
+        </div><div class="feed-item">
+          <span class="feed-tag tag-COMMODITY">COMMODITY</span>
+          <span class="feed-time">45m ago</span>
+          <div class="feed-title">Global Market: UK gilt yields hit one-week low as oil prices retreat, easing rate concerns</div>
+          <div class="feed-summary">The decline in oil prices followed a pause in U.S. military attacks on Iran, reducing fears of a prolonged disruption to global energy supplies and encouraging investors to move back into government bonds....</div>
+        </div><div class="feed-item">
+          <span class="feed-tag tag-DEALS">DEALS</span>
+          <span class="feed-time">1h ago</span>
+          <div class="feed-title">Advance Technoforge IPO Day 1: Issue subscribed 16% so far. Check GMP, key details</div>
+          <div class="feed-summary">Advance Technoforge IPO opened on 27 July, priced at  ₹95 per share. With strong industry expertise, the company supplies forged components to various sectors. The IPO aims to raise  ₹24.03 crore to support expansion and...</div>
+        </div><div class="feed-item">
+          <span class="feed-tag tag-DEALS">DEALS</span>
+          <span class="feed-time">1h ago</span>
+          <div class="feed-title">Global Market: Shein slips to quarterly loss as US tariff changes weigh on sales ahead of Hong Kong IPO</div>
+          <div class="feed-summary">Fast-fashion giant Shein reported a $99 million loss in Q1 2026, hit by slowing sales after the US ended duty exemptions for low-value imports and a one-time accounting charge. The disclosure came in the company’s draft...</div>
+        </div><div class="feed-item">
+          <span class="feed-tag tag-DEALS">DEALS</span>
+          <span class="feed-time">1h ago</span>
+          <div class="feed-title">Manipal Health IPO: GMP signals modest listing gains; 10 key things to know from RHP</div>
+          <div class="feed-summary">Manipal Health Enterprises IPO: The book build issue combines a fresh issue of 13.56 crore shares and an offer for sale (OFS) of 2.16 crore shares. The price band has been fixed in the range of  ₹560 to  ₹590 per equity...</div>
+        </div></div>
+  <div class="panel"><h2>GLOBAL CUES</h2><div class="cue-row">
+          <span class="cue-name">S&P 500</span>
+          <div class="cue-vals">
+            <div class="cue-value">7,411.98</div>
+            <div class="cue-pct pct-up">+0.05%</div>
+          </div>
+        </div><div class="cue-row">
+          <span class="cue-name">QQQ</span>
+          <div class="cue-vals">
+            <div class="cue-value">684.23</div>
+            <div class="cue-pct pct-down">-1.12%</div>
+          </div>
+        </div><div class="cue-row">
+          <span class="cue-name">Nikkei 225</span>
+          <div class="cue-vals">
+            <div class="cue-value">64,931.19</div>
+            <div class="cue-pct pct-up">+0.50%</div>
+          </div>
+        </div><div class="cue-row">
+          <span class="cue-name">Hang Seng</span>
+          <div class="cue-vals">
+            <div class="cue-value">25,207.18</div>
+            <div class="cue-pct pct-up">+0.98%</div>
+          </div>
+        </div><div class="cue-row">
+          <span class="cue-name">Shanghai Composite</span>
+          <div class="cue-vals">
+            <div class="cue-value">3,858.25</div>
+            <div class="cue-pct pct-up">+1.15%</div>
+          </div>
+        </div><div class="cue-row">
+          <span class="cue-name">KOSPI</span>
+          <div class="cue-vals">
+            <div class="cue-value">6,755.75</div>
+            <div class="cue-pct pct-up">+0.97%</div>
+          </div>
+        </div></div>
+</div>
+</body></html>
