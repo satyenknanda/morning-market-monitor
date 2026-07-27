@@ -10,7 +10,7 @@ Edit the paths/tickers below to match your actual setup.
 # ---------------------------------------------------------------------------
 INDEX_TICKERS = {
     "NIFTY 50": "^NSEI",
-    "NIFTY SMALLCAP 100": "NIFTYSMLCAP100.NS",       # fallback: "NIFTYSMLCAP100.NS"
+    "NIFTY MIDSMALLCAP 400": "NIFTYMIDSML400.NS",       # fallback: "NIFTYSMLCAP100.NS"
     "SENSEX": "^BSESN",
 }
 
