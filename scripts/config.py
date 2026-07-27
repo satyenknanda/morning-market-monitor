@@ -89,4 +89,9 @@ NEWS_TAGS = {
     "POLICY":   ["rbi", "fed", "sebi", "budget", "tariff", "trade deal"],
 }
 
-OUTPUT_DIR = "docs"
+# LOAD-BEARING: main.py runs with working-directory: scripts in the GitHub
+# Actions workflow, so this path is relative to scripts/, not the repo root.
+# It must stay "../docs" to land in the docs/ folder git actually tracks —
+# this has been silently reverted to "docs" twice already. Do not "fix" it
+# back without checking .github/workflows/market-monitor.yml first.
+OUTPUT_DIR = "../docs"
