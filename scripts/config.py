@@ -76,7 +76,7 @@ NSE_HEADERS = {
 NEWS_FEEDS = {
     "Livemint Markets": "https://www.livemint.com/rss/markets",
     "Economic Times Markets": "https://economictimes.indiatimes.com/markets/rssfeeds/1977021501.cms",
-    "Moneycontrol Business": "https://www.moneycontrol.com/rss/business.xml",
+    "Moneycontrol": "https://www.moneycontrol.com/rss/latestnews.xml",
 }
 NEWS_ITEMS_LIMIT = 12          # total headlines shown in the feed panel
 NEWS_PER_FEED_LIMIT = 10        # how many entries to pull from each RSS feed before ranking
