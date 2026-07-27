@@ -46,6 +46,16 @@ def fetch_feed_items() -> list[dict]:
     for source, url in config.NEWS_FEEDS.items():
         try:
             parsed = feedparser.parse(url)
+            n_entries = len(parsed.entries)
+            bozo = getattr(parsed, "bozo", 0)
+            if n_entries == 0:
+                log.warning(
+                    "Feed for %s (%s) returned 0 entries — bozo=%s, bozo_exception=%s, status=%s",
+                    source, url, bozo, getattr(parsed, "bozo_exception", None),
+                    getattr(parsed, "status", "n/a"),
+                )
+            else:
+                log.info("Feed for %s returned %d entries", source, n_entries)
             for entry in parsed.entries[:per_feed_limit]:
                 title = _strip_html(entry.get("title", ""))
                 raw_summary = _strip_html(entry.get("summary", "") or entry.get("description", ""))

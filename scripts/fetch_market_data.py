@@ -61,7 +61,19 @@ def fetch_nse_indices(name_match_map: dict) -> dict:
         session.get(config.NSE_HOME_URL, timeout=10)
         resp = session.get(config.NSE_ALL_INDICES_URL, timeout=10)
         resp.raise_for_status()
-        rows = resp.json().get("data", [])
+        payload = resp.json()
+        rows = payload.get("data", []) if isinstance(payload, dict) else []
+        if len(rows) < 5:
+            # Something's off — a real allIndices response has ~100+ rows.
+            # Dump enough to diagnose without flooding the log.
+            log.warning(
+                "NSE allIndices returned only %d row(s) — likely blocked/rate-limited "
+                "or a different response shape than expected. Top-level keys: %s. "
+                "Raw payload (truncated): %s",
+                len(rows),
+                list(payload.keys()) if isinstance(payload, dict) else type(payload).__name__,
+                str(payload)[:500],
+            )
         for label, needle in name_match_map.items():
             needle_up = needle.upper()
             match = next(
