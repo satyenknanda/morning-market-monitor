@@ -14,25 +14,28 @@ log = logging.getLogger("market_monitor.fetch_market_data")
 
 
 def _quote(ticker: str):
-    """Return (last_price, pct_change) for a ticker, or (None, None) on failure."""
-    try:
-        t = yf.Ticker(ticker)
-        hist = t.history(period="5d", interval="1d")
-        if hist.empty or len(hist) < 2:
-            log.warning("No/insufficient history for %s", ticker)
-            return None, None
-        last = float(hist["Close"].iloc[-1])
-        prev = float(hist["Close"].iloc[-2])
-        if math.isnan(last) or math.isnan(prev) or prev == 0:
-            log.warning("NaN/zero close price for %s", ticker)
-            return None, None
-        pct = (last - prev) / prev * 100
-        if math.isnan(pct):
-            pct = None
-        return round(last, 2), round(pct, 2) if pct is not None else None
-    except Exception as exc:
-        log.warning("Failed to fetch %s: %s", ticker, exc)
-        return None, None
+    """Return (last_price, pct_change) for a ticker, or (None, None) on failure.
+    Some NSE index tickers don't return bars for short periods even though
+    the symbol itself is valid — retry with progressively longer windows
+    before giving up."""
+    for period in ("5d", "1mo", "3mo"):
+        try:
+            t = yf.Ticker(ticker)
+            hist = t.history(period=period, interval="1d")
+            if hist.empty or len(hist) < 2:
+                continue
+            last = float(hist["Close"].iloc[-1])
+            prev = float(hist["Close"].iloc[-2])
+            if math.isnan(last) or math.isnan(prev) or prev == 0:
+                continue
+            pct = (last - prev) / prev * 100
+            if math.isnan(pct):
+                pct = None
+            return round(last, 2), round(pct, 2) if pct is not None else None
+        except Exception as exc:
+            log.warning("Fetch attempt failed for %s (period=%s): %s", ticker, period, exc)
+    log.warning("No usable history for %s after trying 5d/1mo/3mo", ticker)
+    return None, None
 
 
 def fetch_group(ticker_map: dict) -> dict:

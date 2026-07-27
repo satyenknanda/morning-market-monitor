@@ -9,14 +9,16 @@ Edit the paths/tickers below to match your actual setup.
 INDEX_TICKERS = {
     "NIFTY 50": "^NSEI",
     "SENSEX": "^BSESN",
+    # Confirmed valid on finance.yahoo.com (as "NIFTY MIDSML 400") — needed
+    # the longer-period retry in fetch_market_data._quote() to actually
+    # return bars, not a different symbol.
+    "NIFTY MIDSMALLCAP 400": "NIFTYMIDSML400.NS",
 }
 
-# Indices Yahoo doesn't reliably carry — fetched straight from NSE's own
-# live-indices API instead (see fetch_market_data.fetch_nse_indices()).
-# Match against the "indexName" field NSE returns (case-insensitive substring).
-NSE_DIRECT_INDICES = {
-    "NIFTY MIDSMALLCAP 400": "MIDSMALLCAP 400",
-}
+# Kept as a fallback path — unused unless a future index proves as
+# stubborn as this one was, in which case NSE's own live-indices API
+# (fetch_market_data.fetch_nse_indices()) is the alternative to reach for.
+NSE_DIRECT_INDICES = {}
 
 FX_COMMODITY_TICKERS = {
     "USD/INR": "INR=X",
