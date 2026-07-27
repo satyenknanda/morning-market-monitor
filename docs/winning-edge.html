@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>The Winning Edge</title>
+<style>
+:root {
+  --navy: #2c4a6e; --navy-dark: #1e3550; --ink: #1a2433; --muted: #6b7686;
+  --green: #1a9c5c; --red: #d63a3a; --amber: #b8862c; --card-bg: #ffffff;
+  --page-bg: #f4f6f9; --border: #e4e8ee;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  background: var(--page-bg); color: var(--ink);
+}
+.topbar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 32px; background: #fff; border-bottom: 1px solid var(--border);
+}
+.topbar .brand { font-weight: 700; font-size: 15px; }
+.topbar nav { display: flex; gap: 10px; }
+.topbar nav a {
+  padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border);
+  color: var(--ink); text-decoration: none; font-size: 13px; font-weight: 600;
+}
+.topbar nav a.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+.topbar .timestamp { font-size: 12px; color: var(--muted); }
+.hero {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
+  color: #fff; text-align: center; padding: 44px 20px 36px;
+}
+.hero .ticker-line { font-size: 12px; opacity: .85; margin-bottom: 18px; }
+.hero h1 { font-size: 54px; margin: 0; letter-spacing: 2px; font-weight: 800; }
+.hero .tagline { font-size: 12px; letter-spacing: 3px; opacity: .8; margin: 14px 0 6px; text-transform: uppercase; }
+.hero .meta { font-size: 13px; opacity: .9; }
+.metric-strip {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1px; background: var(--border); margin: 24px 32px; border-radius: 10px; overflow: hidden;
+}
+.metric-card { background: #fff; padding: 20px 18px; text-align: center; }
+.metric-label {
+  display: inline-block; background: var(--navy); color: #fff; font-size: 11px;
+  font-weight: 700; letter-spacing: .5px; padding: 4px 12px; border-radius: 6px; margin-bottom: 12px;
+}
+.metric-value { font-size: 24px; font-weight: 700; }
+.metric-pct { font-size: 13px; font-weight: 600; margin-top: 4px; }
+.pct-up { color: var(--green); } .pct-down { color: var(--red); } .pct-flat { color: var(--muted); }
+.grid-2 { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; margin: 0 32px 32px; }
+.panel { background: #fff; border-radius: 10px; border: 1px solid var(--border); padding: 22px 24px; }
+.panel h2 { font-size: 13px; letter-spacing: .5px; color: var(--navy); margin: 0 0 16px; }
+.feed-item { padding: 14px 0; border-bottom: 1px solid var(--border); }
+.feed-item:last-child { border-bottom: none; }
+.feed-tag {
+  display: inline-block; font-size: 10px; font-weight: 700; color: #fff;
+  padding: 2px 8px; border-radius: 4px; margin-right: 8px; background: var(--muted);
+}
+.tag-BREAKING { background: var(--red); } .tag-DEALS { background: #8a4fd6; }
+.tag-EARNINGS { background: var(--green); } .tag-COMMODITY { background: var(--amber); }
+.tag-POLICY { background: #3a6fd6; } .tag-MARKETS { background: var(--muted); }
+.feed-time { font-size: 11px; color: var(--muted); }
+.feed-title { font-weight: 600; font-size: 14px; margin: 6px 0 4px; }
+.feed-summary { font-size: 12.5px; color: var(--muted); line-height: 1.4; }
+.cue-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 12px 0; border-bottom: 1px solid var(--border);
+}
+.cue-row:last-child { border-bottom: none; }
+.cue-name { font-size: 13.5px; font-weight: 500; }
+.cue-vals { text-align: right; }
+.cue-value { font-size: 14px; font-weight: 700; }
+.cue-pct { font-size: 11.5px; }
+.gauge-wrap { text-align: center; }
+.gauge-value { font-size: 42px; font-weight: 800; margin-top: -18px; }
+.gauge-caption { font-size: 12px; color: var(--muted); letter-spacing: .5px; }
+.adv-dec-bar {
+  height: 10px; border-radius: 6px; overflow: hidden; display: flex; margin: 14px 0 8px;
+}
+.chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.chip { background: var(--page-bg); border: 1px solid var(--border); border-radius: 16px; padding: 6px 12px; font-size: 12px; }
+.footer-note { background: #eaf6ee; color: var(--green); font-size: 13px; padding: 10px 16px; border-radius: 8px; margin-top: 14px; }
+.score-badge {
+  display: inline-flex; align-items: center; gap: 10px; margin-bottom: 4px;
+}
+.score-pill {
+  background: var(--amber); color: #fff; font-weight: 700; font-size: 11px;
+  padding: 4px 10px; border-radius: 4px;
+}
+.score-num { font-size: 20px; font-weight: 800; }
+.score-desc { color: var(--amber); font-weight: 600; font-size: 13px; }
+.factor-block { margin-top: 18px; }
+.factor-block h3 { font-size: 12px; color: var(--navy); margin: 0 0 6px; letter-spacing: .3px; }
+.factor-block ul { margin: 0; padding-left: 18px; font-size: 13px; color: #333; line-height: 1.55; }
+</style></head>
+<body>
+<div class="topbar">
+      <div class="brand">The Market Monitor</div>
+      <nav><a href="index.html" class="">Market Monitor →</a><a href="winning-edge.html" class="active">Winning Edge →</a><a href="#" class="">Live Positions →</a><a href="#" class="">KPIs →</a><a href="#">● Connect Kite</a></nav>
+      <div class="timestamp">Monday, 27 July 2026 · 10:48 AM IST</div>
+    </div>
+<div class="hero">
+  <h1>THE WINNING EDGE</h1>
+  <div class="tagline">The Trend Is Your Friend</div>
+  <div class="meta">Indian equities · Monday, 27 July 2026 · generated 10:46 AM IST</div>
+</div>
+<div class="grid-2">
+  <div class="panel">
+    <h2>TICKER THRUST</h2>
+    <div class="gauge-wrap">
+      <svg viewBox="0 0 200 110" width="260">
+      <path d="M 10 100 A 90 90 0 0 1 190 100" fill="none" stroke="#e4e8ee" stroke-width="16"/>
+      <path d="M 10 100 A 90 90 0 0 1 148.2 24.0" fill="none" stroke="#1a9c5c" stroke-width="16" stroke-linecap="round"/>
+    </svg>
+      <div class="gauge-value">68.0%</div>
+      <div class="gauge-caption">OF THE TAPE IS ADVANCING</div>
+    </div>
+    <div style="display:flex; justify-content:space-between; margin-top:18px;">
+      <div><span style="color:var(--green); font-weight:800; font-size:20px">1,414</span> ADVANCES</div>
+      <div>TAPE 2,079</div>
+      <div><span style="color:var(--red); font-weight:800; font-size:20px">648</span> DECLINES</div>
+    </div>
+    <div class="adv-dec-bar">
+      <div style="background:var(--green); width:68.0%"></div>
+      <div style="background:var(--red); flex:1"></div>
+    </div>
+    <div class="chips">
+      <span class="chip">+17% in 5D · 17 stocks</span>
+      <span class="chip">4% vol moves · 178▲ / 45▼</span>
+    </div>
+    <div class="footer-note">Advancers ahead</div>
+  </div>
+  <div class="panel">
+    <h2>TALE OF THE TAPE <span style="font-weight:400;color:var(--muted)">— Score = equal-weighted avg of the 4 factors below</span></h2>
+    
+    <div class="score-badge">
+      <span class="score-pill">RISK-ON</span>
+      <span class="score-num">72.0/100</span>
+      <span class="score-desc">— broad participation, size up on your best setups</span>
+    </div>
+
+    <div class="factor-block">
+      <h3>SMA GAUGES</h3>
+      <ul>
+        <li>20/50/200-day % above SMA: 40.4% / 51.3% / —</li>
+        <li>Mixed readings across timeframes — participation is uneven</li>
+      </ul>
+    </div>
+
+    <div class="factor-block">
+      <h3>NEW HIGHS – LOWS</h3>
+      <ul>
+        <li>Net new highs – lows: +76 today, vs +40 five sessions ago</li>
+        <li>The trend is improving — more stocks are breaking out, and momentum is building beneath the surface</li>
+      </ul>
+    </div>
+
+    <div class="factor-block">
+      <h3>PRICE &amp; BREADTH TREND</h3>
+      <ul>
+        <li>Trend factor score: 100/100</li>
+        <li>Price and breadth are confirming each other to the upside — strength is broad-based</li>
+      </ul>
+    </div>
+
+    <div class="factor-block">
+      <h3>10-DAY AVG ADV/DEC</h3>
+      <ul>
+        <li>10-day average advance/decline ratio: 42.3%</li>
+        <li>Middling — no strong directional signal either way over the last 10 sessions</li>
+      </ul>
+    </div>
+    
+  </div>
+</div>
+</body></html>
