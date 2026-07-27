@@ -1,10 +1,17 @@
 """Fetch and tag headlines for the Live Intelligence Feed panel."""
 import logging
+import re
 from datetime import datetime, timezone
 
 import feedparser
 
 import config
+
+_TAG_RE = re.compile(r"<[^>]+>")
+
+
+def _strip_html(text: str) -> str:
+    return _TAG_RE.sub("", text or "").replace("&nbsp;", " ").strip()
 
 log = logging.getLogger("market_monitor.news_feed")
 
@@ -33,19 +40,26 @@ def _time_ago(published_parsed) -> str:
 
 def fetch_feed_items() -> list[dict]:
     items = []
+    per_feed_limit = getattr(config, "NEWS_PER_FEED_LIMIT", 6)
+    summary_chars = getattr(config, "NEWS_SUMMARY_CHARS", 220)
+
     for source, url in config.NEWS_FEEDS.items():
         try:
             parsed = feedparser.parse(url)
-            for entry in parsed.entries[:6]:
-                title = entry.get("title", "").strip()
-                summary = entry.get("summary", "") or entry.get("description", "")
+            for entry in parsed.entries[:per_feed_limit]:
+                title = _strip_html(entry.get("title", ""))
+                raw_summary = _strip_html(entry.get("summary", "") or entry.get("description", ""))
+                truncated = len(raw_summary) > summary_chars
+                summary = raw_summary[:summary_chars].strip()
                 items.append({
                     "source": source,
-                    "tag": _tag_for(title + " " + summary),
+                    "tag": _tag_for(title + " " + raw_summary),
                     "time_ago": _time_ago(entry.get("published_parsed")),
                     "published_parsed": entry.get("published_parsed"),
                     "title": title,
-                    "summary": summary[:220].strip(),
+                    "summary": summary,
+                    "truncated": truncated,
+                    "link": entry.get("link", ""),
                 })
         except Exception as exc:
             log.warning("Feed fetch failed for %s: %s", source, exc)

@@ -48,8 +48,14 @@ body {
 .grid-2 { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; margin: 0 32px 32px; }
 .panel { background: #fff; border-radius: 10px; border: 1px solid var(--border); padding: 22px 24px; }
 .panel h2 { font-size: 13px; letter-spacing: .5px; color: var(--navy); margin: 0 0 16px; }
-.feed-item { padding: 14px 0; border-bottom: 1px solid var(--border); }
+.feed-item {
+  display: block; padding: 14px 0; border-bottom: 1px solid var(--border);
+  color: inherit; text-decoration: none; cursor: pointer;
+}
 .feed-item:last-child { border-bottom: none; }
+.feed-item:hover .feed-title { color: var(--navy); text-decoration: underline; }
+.feed-source { font-size: 10.5px; color: var(--muted); margin-left: 4px; }
+.feed-readmore { font-size: 11px; color: var(--navy); font-weight: 600; }
 .feed-tag {
   display: inline-block; font-size: 10px; font-weight: 700; color: #fff;
   padding: 2px 8px; border-radius: 4px; margin-right: 8px; background: var(--muted);
@@ -157,12 +163,17 @@ def render_market_monitor(indices, fx_commodity, fii_dii, global_cues, news_item
 
     feed_html = ""
     for item in news_items:
-        feed_html += f'''<div class="feed-item">
+        link = item.get("link") or "#"
+        ellipsis = "…" if item.get("truncated") else ""
+        tag_href = f'href="{link}" target="_blank" rel="noopener noreferrer"' if link != "#" else 'href="#"'
+        feed_html += f'''<a class="feed-item" {tag_href}>
           <span class="feed-tag tag-{item["tag"]}">{item["tag"]}</span>
           <span class="feed-time">{item["time_ago"]}</span>
+          <span class="feed-source">· {item.get("source", "")}</span>
           <div class="feed-title">{item["title"]}</div>
-          <div class="feed-summary">{item["summary"]}...</div>
-        </div>'''
+          <div class="feed-summary">{item["summary"]}{ellipsis}</div>
+          <div class="feed-readmore">Read full article →</div>
+        </a>'''
     if not feed_html:
         feed_html = '<div class="feed-item feed-summary">No headlines fetched this run.</div>'
 

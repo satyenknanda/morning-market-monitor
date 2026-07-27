@@ -10,7 +10,7 @@ Edit the paths/tickers below to match your actual setup.
 # ---------------------------------------------------------------------------
 INDEX_TICKERS = {
     "NIFTY 50": "^NSEI",
-    "NIFTY MIDSMALLCAP 400": "NIFTYMIDSML400.NS",       # fallback: "NIFTYSMLCAP100.NS"
+    "NIFTY SMALLCAP 100": "^CNXSC",       # fallback: "NIFTYSMLCAP100.NS"
     "SENSEX": "^BSESN",
 }
 
@@ -71,7 +71,9 @@ NEWS_FEEDS = {
     "Economic Times Markets": "https://economictimes.indiatimes.com/markets/rssfeeds/1977021501.cms",
     "Moneycontrol Business": "https://www.moneycontrol.com/rss/business.xml",
 }
-NEWS_ITEMS_LIMIT = 8
+NEWS_ITEMS_LIMIT = 12          # total headlines shown in the feed panel
+NEWS_PER_FEED_LIMIT = 10        # how many entries to pull from each RSS feed before ranking
+NEWS_SUMMARY_CHARS = 420        # snippet length per headline (was 220 — this is the "deeper" ask)
 
 # Keyword → tag mapping for the feed (first match wins, else "MARKETS")
 NEWS_TAGS = {
@@ -82,4 +84,4 @@ NEWS_TAGS = {
     "POLICY":   ["rbi", "fed", "sebi", "budget", "tariff", "trade deal"],
 }
 
-OUTPUT_DIR = "../docs"
+OUTPUT_DIR = "docs"
