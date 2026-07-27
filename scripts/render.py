@@ -1,6 +1,7 @@
 """Render the Market Monitor and Winning Edge HTML pages."""
 import math
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 SHARED_CSS = """
 :root {
@@ -136,7 +137,7 @@ def _nav(active: str) -> str:
     return f'''<div class="topbar">
       <div class="brand">The Market Monitor</div>
       <nav>{links}<a href="#">● Connect Kite</a></nav>
-      <div class="timestamp">{datetime.now().strftime("%A, %d %B %Y · %I:%M %p IST")}</div>
+      <div class="timestamp">{datetime.now(ZoneInfo("Asia/Kolkata")).strftime("%A, %d %B %Y · %I:%M %p IST")}</div>
     </div>'''
 
 

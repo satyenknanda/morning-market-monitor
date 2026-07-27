@@ -9,6 +9,7 @@ Run in CI:     see .github/workflows/market-monitor.yml
 import logging
 import os
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 import config
 import fetch_market_data
@@ -22,7 +23,7 @@ log = logging.getLogger("market_monitor.main")
 
 
 def main():
-    generated_at = datetime.now()
+    generated_at = datetime.now(ZoneInfo("Asia/Kolkata"))
 
     log.info("Fetching indices / FX / commodities / global cues...")
     indices = fetch_market_data.fetch_group(config.INDEX_TICKERS)

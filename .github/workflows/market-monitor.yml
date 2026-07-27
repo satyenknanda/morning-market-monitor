@@ -34,10 +34,9 @@ jobs:
           git config user.email "actions@github.com"
           git add docs/
           git diff --cached --quiet || git commit -m "Update morning market monitor $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          # Rebase onto the latest remote main before pushing, in case a
+          # manual push landed while this run was generating the pages —
+          # otherwise a plain `git push` fails silently here and the run
+          # shows green even though nothing new actually reached main.
+          git pull --rebase origin main
           git push
-
-      # Optional: if you enable GitHub Pages with source = /docs on the
-      # default branch, the commit above is all you need — Pages will
-      # redeploy automatically. This explicit deploy step is only needed
-      # if you're using the Pages "GitHub Actions" build source instead.
-      
