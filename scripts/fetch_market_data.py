@@ -66,7 +66,11 @@ def fetch_nse_indices(name_match_map: dict) -> dict:
                 None,
             )
             if match is None:
-                log.warning("No NSE index row matched %r for %s", needle, label)
+                available = sorted({str(r.get("indexName", "")) for r in rows})
+                log.warning(
+                    "No NSE index row matched %r for %s. Available indexName values: %s",
+                    needle, label, available,
+                )
                 continue
             try:
                 out[label] = {
