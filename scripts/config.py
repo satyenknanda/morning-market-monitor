@@ -11,14 +11,11 @@ INDEX_TICKERS = {
     "SENSEX": "^BSESN",
 }
 
-# Nifty Midsmallcap 400 has failed via yfinance repeatedly (NIFTYMIDSML400.NS
-# is a valid symbol on finance.yahoo.com but yfinance's .history() won't
-# return bars for it even with 5d/1mo/3mo retries — likely a Yahoo API/library
-# quirk specific to this ticker). Fetching it straight from NSE's own
-# live-indices API instead — same nseindia.com domain the FII/DII fetch
-# already reaches successfully from GitHub Actions.
+# Fetched straight from NSE's own live-indices API rather than yfinance —
+# the "index" field (confirmed via nsetools) is what allIndices actually
+# uses; substring-match against that.
 NSE_DIRECT_INDICES = {
-    "NIFTY MIDSMALLCAP 400": "MIDSMALLCAP 400",
+    "NIFTY SMALLCAP 100": "SMALLCAP 100",
 }
 
 FX_COMMODITY_TICKERS = {
@@ -77,7 +74,10 @@ NSE_HEADERS = {
 NEWS_FEEDS = {
     "Livemint Markets": "https://www.livemint.com/rss/markets",
     "Economic Times Markets": "https://economictimes.indiatimes.com/markets/rssfeeds/1977021501.cms",
-    "Moneycontrol": "https://www.moneycontrol.com/rss/latestnews.xml",
+    # "Moneycontrol" removed: moneycontrol.com/rss/latestnews.xml is confirmed
+    # stale — it was serving April 2024 content in production, over 800 days
+    # old, from a working (200 OK) request. Not a fetch bug; the feed itself
+    # appears abandoned. Re-add only with a verified-current URL.
 }
 NEWS_ITEMS_LIMIT = 12          # total headlines shown in the feed panel
 NEWS_PER_FEED_LIMIT = 10        # how many entries to pull from each RSS feed before ranking
