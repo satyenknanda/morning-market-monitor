@@ -75,7 +75,32 @@ def fetch_feed_items() -> list[dict]:
             log.warning("Feed fetch failed for %s: %s", source, exc)
 
     items.sort(key=lambda x: x["published_parsed"] or 0, reverse=True)
-    return items[: config.NEWS_ITEMS_LIMIT]
+    return _select_with_source_floor(items, config.NEWS_ITEMS_LIMIT, min_per_source=2)
+
+
+def _select_with_source_floor(items: list, limit: int, min_per_source: int) -> list:
+    """
+    Take the top `limit` items by recency, but first guarantee up to
+    `min_per_source` slots for every source present — otherwise a feed
+    that's simply updated less often (fewer very-recent items) can get
+    crowded out of the panel entirely by a busier feed's backlog.
+    """
+    by_source = {}
+    for item in items:
+        by_source.setdefault(item["source"], []).append(item)
+
+    guaranteed = []
+    for source_items in by_source.values():
+        guaranteed.extend(source_items[:min_per_source])
+    guaranteed = guaranteed[:limit]  # in case sources * min_per_source exceeds limit
+
+    guaranteed_ids = {id(x) for x in guaranteed}
+    remainder = [x for x in items if id(x) not in guaranteed_ids]
+
+    remaining_slots = max(limit - len(guaranteed), 0)
+    combined = guaranteed + remainder[:remaining_slots]
+    combined.sort(key=lambda x: x["published_parsed"] or 0, reverse=True)
+    return combined
 
 
 if __name__ == "__main__":
