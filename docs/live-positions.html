@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html><head><meta charset="utf-8"><title>The Winning Edge</title>
+<html><head><meta charset="utf-8"><title>Live Positions</title>
 <style>
 :root {
   --navy: #2c4a6e; --navy-dark: #1e3550; --ink: #1a2433; --muted: #6b7686;
@@ -94,85 +94,30 @@ body {
 .factor-block { margin-top: 18px; }
 .factor-block h3 { font-size: 12px; color: var(--navy); margin: 0 0 6px; letter-spacing: .3px; }
 .factor-block ul { margin: 0; padding-left: 18px; font-size: 13px; color: #333; line-height: 1.55; }
+
+table td, table th { padding: 8px; border-bottom: 1px solid var(--border); text-align: right; }
+table td:first-child, table th:first-child { text-align: left; }
 </style></head>
 <body>
 <div class="topbar">
       <div class="brand">The Market Monitor</div>
-      <nav><a href="index.html" class="">Market Monitor →</a><a href="winning-edge.html" class="active">Winning Edge →</a><a href="live-positions.html" class="">Live Positions →</a><a href="#" class="">KPIs →</a><a href="#">● Connect Kite</a></nav>
+      <nav><a href="index.html" class="">Market Monitor →</a><a href="winning-edge.html" class="">Winning Edge →</a><a href="live-positions.html" class="active">Live Positions →</a><a href="#" class="">KPIs →</a><a href="#">● Connect Kite</a></nav>
       <div class="timestamp">Tuesday, 28 July 2026 · 09:27 PM IST</div>
     </div>
 <div class="hero">
-  <h1>THE WINNING EDGE</h1>
-  <div class="tagline">The Trend Is Your Friend</div>
-  <div class="meta">Indian equities · Tuesday, 28 July 2026 · generated 09:24 PM IST</div>
+  <h1 style="font-size:34px;">LIVE POSITIONS</h1>
+  <div class="meta">From your holdings sheet · Tuesday, 28 July 2026 · 09:24 PM IST</div>
 </div>
 <div class="grid-2">
-  <div class="panel">
-    <h2>TICKER THRUST</h2>
-    <div class="gauge-wrap">
-      <svg viewBox="0 0 200 110" width="260">
-      <path d="M 10 100 A 90 90 0 0 1 190 100" fill="none" stroke="#e4e8ee" stroke-width="16"/>
-      <path d="M 10 100 A 90 90 0 0 1 44.4 29.2" fill="none" stroke="#1a9c5c" stroke-width="16" stroke-linecap="round"/>
-    </svg>
-      <div class="gauge-value">28.8%</div>
-      <div class="gauge-caption">OF THE TAPE IS ADVANCING</div>
-    </div>
-    <div style="display:flex; justify-content:space-between; margin-top:18px;">
-      <div><span style="color:var(--green); font-weight:800; font-size:20px">598</span> ADVANCES</div>
-      <div>TAPE 2,078</div>
-      <div><span style="color:var(--red); font-weight:800; font-size:20px">1,465</span> DECLINES</div>
-    </div>
-    <div class="adv-dec-bar">
-      <div style="background:var(--green); width:28.8%"></div>
-      <div style="background:var(--red); flex:1"></div>
-    </div>
-    <div class="chips">
-      <span class="chip">+9% in 5D · 9 stocks</span>
-      <span class="chip">4% vol moves · 55▲ / 125▼</span>
-    </div>
-    <div class="footer-note">Advancers ahead</div>
-  </div>
-  <div class="panel">
-    <h2>TALE OF THE TAPE <span style="font-weight:400;color:var(--muted)">— Score = equal-weighted avg of the 4 factors below</span></h2>
-    
-    <div class="score-badge">
-      <span class="score-pill">RISK-OFF</span>
-      <span class="score-num">36.5/100</span>
-      <span class="score-desc">— weak participation, small sizes or sitout</span>
-    </div>
-
-    <div class="factor-block">
-      <h3>SMA GAUGES</h3>
-      <ul>
-        <li>20/50/200-day % above SMA: 35.7% / 47.2% / —</li>
-        <li>All 3 gauges are below 50 — participation is narrow, with only a thin slice of the tape holding up</li>
-      </ul>
-    </div>
-
-    <div class="factor-block">
-      <h3>NEW HIGHS – LOWS</h3>
-      <ul>
-        <li>Net new highs – lows: +12 today, vs +63 five sessions ago</li>
-        <li>The trend is deteriorating — fewer stocks are breaking out than five sessions ago</li>
-      </ul>
-    </div>
-
-    <div class="factor-block">
-      <h3>PRICE &amp; BREADTH TREND</h3>
-      <ul>
-        <li>Trend factor score: 0/100</li>
-        <li>Price and breadth are confirming each other to the downside — weakness is broad-based, not just a few names</li>
-      </ul>
-    </div>
-
-    <div class="factor-block">
-      <h3>10-DAY AVG ADV/DEC</h3>
-      <ul>
-        <li>10-day average advance/decline ratio: 42.7%</li>
-        <li>Middling — no strong directional signal either way over the last 10 sessions</li>
-      </ul>
-    </div>
-    
-  </div>
+  
+        <div class="panel">
+          <h2>CURRENT HOLDINGS</h2>
+          <p style="color:var(--muted); font-size:13px;">
+            No holdings file has been uploaded yet — drop your positions
+            sheet into <code>data/holdings.xlsx</code> and push, and this
+            page will populate on the next run.
+          </p>
+        </div>
+        
 </div>
 </body></html>
