@@ -127,7 +127,7 @@ def _nav(active: str) -> str:
     tabs = [
         ("Market Monitor", "index.html"),
         ("Winning Edge", "winning-edge.html"),
-        ("Live Positions", "#"),
+        ("Live Positions", "live-positions.html"),
         ("KPIs", "#"),
     ]
     links = "".join(
@@ -355,3 +355,89 @@ def _tenday_commentary(avg):
     if avg > 60:
         return "Strong — advancers have had the upper hand over the last 10 sessions"
     return "Middling — no strong directional signal either way over the last 10 sessions"
+
+
+def render_live_positions(positions: list, news_by_ticker: dict, generated_at) -> str:
+    if not positions:
+        body = """
+        <div class="panel">
+          <h2>CURRENT HOLDINGS</h2>
+          <p style="color:var(--muted); font-size:13px;">
+            No holdings file has been uploaded yet — drop your positions
+            sheet into <code>data/holdings.xlsx</code> and push, and this
+            page will populate on the next run.
+          </p>
+        </div>
+        """
+    else:
+        rows_html = ""
+        for pos in positions:
+            pnl_class = _pct_class(pos["pnl"])
+            stale_note = ' <span style="color:var(--muted); font-size:10px;">(sheet price)</span>' if pos.get("stale_price") else ""
+            rows_html += f"""<tr>
+              <td class="sym">{pos['ticker']}</td>
+              <td>{_fmt_val(pos['qty'], 0)}</td>
+              <td>{_fmt_val(pos['entry_price'])}</td>
+              <td>{_fmt_val(pos['live_price'])}{stale_note}</td>
+              <td class="{pnl_class}">{_fmt_signed(pos['pnl'], 0)}</td>
+              <td class="{pnl_class}">{_fmt_pct(pos['pnl_pct'])}</td>
+              <td>{pos.get('strategy','')}</td>
+              <td>{pos.get('risk_status','')}</td>
+            </tr>"""
+
+        news_html = ""
+        any_news = False
+        for pos in positions:
+            matches = news_by_ticker.get(pos["ticker"], [])
+            for item in matches:
+                any_news = True
+                link = item.get("link") or "#"
+                news_html += f"""<a class="feed-item" href="{link}" target="_blank" rel="noopener noreferrer">
+                  <span class="feed-tag tag-{item.get('tag','MARKETS')}">{pos['ticker']}</span>
+                  <span class="feed-time">{item.get('time_ago','')}</span>
+                  <div class="feed-title">{item.get('title','')}</div>
+                  <div class="feed-readmore">Read full article →</div>
+                </a>"""
+        if not any_news:
+            news_html = '<div class="feed-summary" style="padding:8px 0;">No matching headlines found for your current tickers this run. Matching is by ticker symbol appearing in the headline/summary text, so it can miss articles that only use the company name.</div>'
+
+        body = f"""
+        <div class="panel">
+          <h2>CURRENT HOLDINGS</h2>
+          <table style="width:100%; border-collapse:collapse; font-size:13px;">
+            <tr style="text-align:right; color:var(--muted); font-size:11px;">
+              <th style="text-align:left;">Ticker</th><th>Qty</th><th>Entry</th><th>Live</th>
+              <th>P&amp;L</th><th>P&amp;L %</th><th style="text-align:left;">Strategy</th><th style="text-align:left;">Risk</th>
+            </tr>
+            {rows_html}
+          </table>
+        </div>
+        <div class="panel">
+          <h2>NEWS ON YOUR HOLDINGS</h2>
+          {news_html}
+        </div>
+        """
+
+    return f"""<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Live Positions</title>
+<style>{SHARED_CSS}
+table td, table th {{ padding: 8px; border-bottom: 1px solid var(--border); text-align: right; }}
+table td:first-child, table th:first-child {{ text-align: left; }}
+</style></head>
+<body>
+{_nav("Live Positions")}
+<div class="hero">
+  <h1 style="font-size:34px;">LIVE POSITIONS</h1>
+  <div class="meta">From your holdings sheet · {generated_at.strftime("%A, %d %B %Y · %I:%M %p IST")}</div>
+</div>
+<div class="grid-2">
+  {body}
+</div>
+</body></html>"""
+
+
+def _fmt_signed(v, decimals=2):
+    if _is_missing(v):
+        return "—"
+    sign = "+" if v > 0 else ""
+    return f"{sign}{v:,.{decimals}f}"

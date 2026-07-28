@@ -16,6 +16,7 @@ import fetch_market_data
 import fetch_fii_dii
 import breadth_engine
 import news_feed
+import holdings
 import render
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
@@ -35,7 +36,11 @@ def main():
     fii_dii = fetch_fii_dii.fetch_fii_dii()
 
     log.info("Fetching news feed...")
-    news_items = news_feed.fetch_feed_items()
+    news_items, news_pool = news_feed.fetch_feed_items()
+
+    log.info("Loading holdings...")
+    positions = holdings.load_holdings()
+    news_by_ticker = holdings.match_news_to_holdings(positions, news_pool) if positions else {}
 
     log.info("Loading NSE universe...")
     universe = breadth_engine.load_universe()
@@ -62,13 +67,16 @@ def main():
 
     mm_html = render.render_market_monitor(indices, fx_commodity, fii_dii, global_cues, news_items, generated_at)
     we_html = render.render_winning_edge(breadth, scores, generated_at)
+    lp_html = render.render_live_positions(positions, news_by_ticker, generated_at)
 
     with open(os.path.join(config.OUTPUT_DIR, "index.html"), "w") as f:
         f.write(mm_html)
     with open(os.path.join(config.OUTPUT_DIR, "winning-edge.html"), "w") as f:
         f.write(we_html)
+    with open(os.path.join(config.OUTPUT_DIR, "live-positions.html"), "w") as f:
+        f.write(lp_html)
 
-    log.info("Wrote %s/index.html and %s/winning-edge.html", config.OUTPUT_DIR, config.OUTPUT_DIR)
+    log.info("Wrote index.html, winning-edge.html, live-positions.html to %s", config.OUTPUT_DIR)
 
 
 if __name__ == "__main__":

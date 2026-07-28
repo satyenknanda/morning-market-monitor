@@ -80,6 +80,7 @@ NEWS_FEEDS = {
     # appears abandoned. Re-add only with a verified-current URL.
 }
 NEWS_ITEMS_LIMIT = 12          # total headlines shown in the feed panel
+NEWS_POOL_SIZE = 80             # broader pool (pre-truncation) used for matching news to holdings
 NEWS_PER_FEED_LIMIT = 10        # how many entries to pull from each RSS feed before ranking
 NEWS_SUMMARY_CHARS = 420        # snippet length per headline (was 220 — this is the "deeper" ask)
 
@@ -91,6 +92,11 @@ NEWS_TAGS = {
     "COMMODITY": ["crude", "brent", "gold", "oil", "opec"],
     "POLICY":   ["rbi", "fed", "sebi", "budget", "tariff", "trade deal"],
 }
+
+# You upload this file into the repo whenever you want to refresh Live
+# Positions — it's read as-is each run; no upload means the page just
+# shows "no holdings uploaded yet" rather than breaking.
+HOLDINGS_XLSX_PATH = "../data/holdings.xlsx"
 
 # LOAD-BEARING: main.py runs with working-directory: scripts in the GitHub
 # Actions workflow, so this path is relative to scripts/, not the repo root.
