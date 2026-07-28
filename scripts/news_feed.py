@@ -38,7 +38,12 @@ def _time_ago(published_parsed) -> str:
     return f"{hours // 24}d ago"
 
 
-def fetch_feed_items() -> list[dict]:
+def fetch_feed_items() -> tuple[list[dict], list[dict]]:
+    """
+    Returns:
+        news_items  — display list (limited to NEWS_ITEMS_LIMIT, source-floored)
+        pool        — full unsorted list of all fetched items (for ticker matching)
+    """
     items = []
     per_feed_limit = getattr(config, "NEWS_PER_FEED_LIMIT", 6)
     summary_chars = getattr(config, "NEWS_SUMMARY_CHARS", 220)
@@ -75,7 +80,8 @@ def fetch_feed_items() -> list[dict]:
             log.warning("Feed fetch failed for %s: %s", source, exc)
 
     items.sort(key=lambda x: x["published_parsed"] or 0, reverse=True)
-    return _select_with_source_floor(items, config.NEWS_ITEMS_LIMIT, min_per_source=2)
+    news_items = _select_with_source_floor(items, config.NEWS_ITEMS_LIMIT, min_per_source=2)
+    return news_items, items
 
 
 def _select_with_source_floor(items: list, limit: int, min_per_source: int) -> list:
@@ -105,5 +111,6 @@ def _select_with_source_floor(items: list, limit: int, min_per_source: int) -> l
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    for it in fetch_feed_items():
+    news_items, pool = fetch_feed_items()
+    for it in news_items:
         print(it["tag"], it["time_ago"], "-", it["title"])
