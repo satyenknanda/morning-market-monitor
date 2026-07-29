@@ -49,7 +49,7 @@ def fetch_group(ticker_map: dict) -> dict:
 
 def fetch_nse_indices(name_match_map: dict) -> dict:
     """
-    name_match_map: {label: substring_to_match_in_NSE_indexName}
+    name_match_map: {label: substring_to_match_in_NSE_index_field}
     Fetches NSE's own live-indices API and matches rows by substring —
     for sub-indices Yahoo Finance doesn't reliably carry.
     Returns {label: {"value": x, "pct": y}}, with (None, None) per label on failure.
@@ -77,13 +77,13 @@ def fetch_nse_indices(name_match_map: dict) -> dict:
         for label, needle in name_match_map.items():
             needle_up = needle.upper()
             match = next(
-                (r for r in rows if needle_up in str(r.get("indexName", "")).upper()),
+                (r for r in rows if needle_up in str(r.get("index", "")).upper()),
                 None,
             )
             if match is None:
-                available = sorted({str(r.get("indexName", "")) for r in rows})
+                available = sorted({str(r.get("index", "")) for r in rows})
                 log.warning(
-                    "No NSE index row matched %r for %s. Available indexName values: %s",
+                    "No NSE index row matched %r for %s. Available index values: %s",
                     needle, label, available,
                 )
                 continue

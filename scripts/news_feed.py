@@ -38,7 +38,12 @@ def _time_ago(published_parsed) -> str:
     return f"{hours // 24}d ago"
 
 
-def fetch_feed_items() -> list[dict]:
+def fetch_feed_items() -> tuple[list, list]:
+    """Returns (display_items, full_pool) — display_items is what the Live
+    Intelligence Feed panel shows (source-floor applied, capped at
+    NEWS_ITEMS_LIMIT); full_pool is the larger sorted list (capped at
+    NEWS_POOL_SIZE) used for matching news against holdings, which needs
+    more candidates than the panel displays."""
     items = []
     per_feed_limit = getattr(config, "NEWS_PER_FEED_LIMIT", 6)
     summary_chars = getattr(config, "NEWS_SUMMARY_CHARS", 220)
@@ -75,7 +80,9 @@ def fetch_feed_items() -> list[dict]:
             log.warning("Feed fetch failed for %s: %s", source, exc)
 
     items.sort(key=lambda x: x["published_parsed"] or 0, reverse=True)
-    return _select_with_source_floor(items, config.NEWS_ITEMS_LIMIT, min_per_source=2)
+    display_items = _select_with_source_floor(items, config.NEWS_ITEMS_LIMIT, min_per_source=2)
+    pool_size = getattr(config, "NEWS_POOL_SIZE", 80)
+    return display_items, items[:pool_size]
 
 
 def _select_with_source_floor(items: list, limit: int, min_per_source: int) -> list:
